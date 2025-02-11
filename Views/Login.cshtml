@@ -6,15 +6,31 @@
 
 <h2>Login</h2>
 
-<form method="post">
+<form method="post" id="loginForm">
     <label>Email:</label>
     <input type="email" name="email" required />
 
     <label>Password:</label>
     <input type="password" name="password" required />
 
+    <input type="hidden" name="recaptchaToken" id="recaptchaToken" />
+
     <button type="submit">Login</button>
 </form>
+
+<script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY"></script>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        grecaptcha.ready(function() {
+            grecaptcha.execute('YOUR_SITE_KEY', { action: 'login' }).then(function(token) {
+                document.getElementById('recaptchaToken').value = token;
+                document.getElementById('loginForm').submit();
+            });
+        });
+    });
+</script>
+
 
 @if (!ViewData.ModelState.IsValid)
 {

@@ -15,6 +15,12 @@ namespace AceAgencyMembership.Controllers
 
         public IActionResult Index()
         {
+            // Check if session exists
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+            {
+                return RedirectToAction("Login", "Auth"); // Redirect to login page
+            }
+
             return View();
         }
 
