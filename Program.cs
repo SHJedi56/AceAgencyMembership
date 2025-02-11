@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Load connection string from appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddSession(); // Enable session
+
+
 // Configure MySQL Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -43,6 +46,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession(); // Use session before routing
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
