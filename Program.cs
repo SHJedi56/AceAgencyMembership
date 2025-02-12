@@ -7,11 +7,29 @@ using AceAgencyMembership.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load connection string from appsettings.json
+// Ensure appsettings.json is loaded
+builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+// Debug configuration loading
+Console.WriteLine($"Configuration loaded: {builder.Configuration.GetDebugView()}");
+
+// Load connection string
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddSession(); // Enable session
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new Exception("Database connection string is missing. Check appsettings.json!");
+}
 
+// Enable session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(15);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
 
 // Configure MySQL Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -46,8 +64,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseSession(); // Use session before routing
 app.UseRouting();
+app.UseSession(); // Use session after routing
 app.UseAuthentication();
 app.UseAuthorization();
 

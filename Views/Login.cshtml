@@ -18,6 +18,11 @@
     <button type="submit">Login</button>
 </form>
 
+<form method="post" asp-controller="Auth" asp-action="Logout">
+    <button type="submit">Logout</button>
+</form>
+
+
 <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY"></script>
 <script>
     document.getElementById('loginForm').addEventListener('submit', function(event) {

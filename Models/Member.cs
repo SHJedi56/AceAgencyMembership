@@ -2,15 +2,13 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AceAgencyMembership.Models
 {
-    public class Member
+    public class Member : IdentityUser<int>
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required, StringLength(50)]
         public string FirstName { get; set; }
 
@@ -25,10 +23,7 @@ namespace AceAgencyMembership.Models
 
         [Required, StringLength(100)]
         [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; } // Hashed Password
+        public override string Email { get; set; } // Override Email from IdentityUser
 
         [Required]
         public DateTime DateOfBirth { get; set; }
@@ -37,6 +32,25 @@ namespace AceAgencyMembership.Models
 
         [Required]
         public string WhoAmI { get; set; } // Allow all special characters
+
+        public int FailedLoginAttempts { get; set; } = 0; // Track failed logins
+
+        public bool IsLocked => LockoutEnd.HasValue && LockoutEnd.Value > DateTime.UtcNow;
+
+        // Store previous passwords to prevent reuse
+        public string PreviousPasswordHash1 { get; set; }
+        public string PreviousPasswordHash2 { get; set; }
+
+        // Method to lock the user until a specific date
+        public void LockAccount(DateTime lockoutEnd)
+        {
+            LockoutEnd = lockoutEnd;
+        }
+
+        public void UnlockAccount()
+        {
+            LockoutEnd = null;
+        }
 
         // AES Encryption Key (should be stored in a secure config in production)
         private static readonly string EncryptionKey = "YourSecretKey12345"; // Ensure this is 16, 24, or 32 bytes
@@ -86,4 +100,3 @@ namespace AceAgencyMembership.Models
         }
     }
 }
-    
