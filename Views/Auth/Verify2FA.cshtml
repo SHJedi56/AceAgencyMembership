@@ -1,0 +1,25 @@
+﻿
+@model AceAgencyMembership.Models.Verify2FAViewModel
+@{
+    ViewData["Title"] = "Verify2FA";
+}
+
+<h2>Verify OTP</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <label>Enter OTP:</label>
+    <input type="text" name="otp" required />
+
+    <button type="submit">Verify</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}

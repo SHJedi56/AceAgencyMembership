@@ -1,0 +1,125 @@
+﻿@model AceAgencyMembership.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2 class="text-center">Register</h2> <!-- Centered title -->
+
+<form method="post" id="RegisterForm" asp-controller="Auth" asp-action="Register" enctype="multipart/form-data" class="registration-form">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label>First Name:</label>
+        <input type="text" asp-for="FirstName" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Last Name:</label>
+        <input type="text" asp-for="LastName" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Gender:</label>
+        <select asp-for="Gender" required onblur="logError(this)" class="form-control">
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+        </select>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>NRIC:</label>
+        <input type="text" asp-for="EncryptedNRIC" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="EncryptedNRIC" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Email:</label>
+        <input type="email" asp-for="Email" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Password:</label>
+        <input type="password" asp-for="Password" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Confirm Password:</label>
+        <input type="password" asp-for="ConfirmPassword" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Date of Birth:</label>
+        <input type="date" asp-for="DateOfBirth" required onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Resume (PDF/DOCX):</label>
+        <input type="file" asp-for="ResumeFilePath" accept=".pdf,.docx" onblur="logError(this)" class="form-control" />
+        <span asp-validation-for="ResumeFilePath" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Who Am I:</label>
+        <textarea asp-for="WhoAmI" onblur="logError(this)" class="form-control"></textarea>
+        <span asp-validation-for="WhoAmI" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+ <!--Link to Login-->
+<div>
+    <p class="text-center">Already have an account? <a asp-controller="Auth" asp-action="Login">Login here</a></p>
+</div>
+
+<script>
+    function logError(input) {
+        let errorSpan = input.nextElementSibling;
+        if (errorSpan && errorSpan.classList.contains('text-danger') && errorSpan.innerText.trim() !== "") {
+            console.error(`Error in ${input.name}: ${errorSpan.innerText}`);
+        }
+    }
+
+</script>
+
+
+<style>
+    .registration-form {
+        max-width: 500px; /* Set a max width for the form */
+        margin: auto; /* Center the form */
+        padding: 20px; /* Add some padding */
+        border: 1px solid #ccc; /* Add a border */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #f9f9f9; /* Light background color */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* Space between form groups */
+    }
+
+    .form-control {
+        width: 100%; /* Full width for inputs */
+        padding: 10px; /* Padding inside inputs */
+        border: 1px solid #ccc; /* Border for inputs */
+        border-radius: 4px; /* Rounded corners for inputs */
+    }
+
+    .btn {
+        width: 100%; /* Full width for the button */
+        padding: 10px; /* Padding inside the button */
+    }
+
+    .text-center {
+        text-align: center; /* Center the text */
+    }
+</style> 

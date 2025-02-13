@@ -1,5 +1,6 @@
 using AceAgencyMembership.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 
 namespace AceAgencyMembership.Controllers
@@ -15,12 +16,17 @@ namespace AceAgencyMembership.Controllers
 
         public IActionResult Index()
         {
-            // Check if session exists
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("UserEmail")))
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+
+            // Instead of redirecting, show a message for guests
+            if (string.IsNullOrEmpty(userEmail))
             {
-                return RedirectToAction("Login", "Auth"); // Redirect to login page
+                ViewBag.IsGuest = true; // Use this in the View to handle guest users
+                return View();
             }
 
+            ViewBag.IsGuest = false;
+            ViewBag.UserEmail = userEmail;
             return View();
         }
 

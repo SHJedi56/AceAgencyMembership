@@ -1,0 +1,111 @@
+﻿@inject IConfiguration Configuration
+
+@model AceAgencyMembership.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    var siteKey = Configuration["GoogleReCaptcha:SiteKey"];
+}
+
+<h2 class="text-center">Login</h2> <!-- Centered title -->
+
+<form method="post" id="loginForm" asp-controller="Auth" asp-action="Login" class="login-form">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label>Email:</label>
+        <input type="email" asp-for="Email" required class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Password:</label>
+        <input type="password" asp-for="Password" required class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" name="recaptchaToken" id="recaptchaToken" />
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+<!-- Links for Forgot Password and Register -->
+<div class="link-container">
+    <p><a asp-controller="Auth" asp-action="ForgotPassword">Forgot Password?</a></p>
+    <p> | </p> <!-- Separator -->
+    <p>Don't have an account? <a asp-controller="Auth" asp-action="Register">Register here</a></p>
+</div>
+
+<!-- Load the reCAPTCHA script -->
+<script src="https://www.google.com/recaptcha/api.js?render=@siteKey"></script>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        grecaptcha.ready(function () {
+            grecaptcha.execute('@siteKey', { action: 'login' }).then(function (token) {
+                console.log("Generated reCAPTCHA token: " + token); // Log the token
+                document.getElementById('recaptchaToken').value = token; // Set the token in the hidden input
+                document.getElementById('loginForm').submit(); // Submit the form
+            }).catch(function (error) {
+                console.error("Error generating reCAPTCHA token: ", error); // Log any errors
+                alert("There was an error generating the reCAPTCHA token. Please try again.");
+            });
+        }).catch(function (error) {
+            console.error("Error initializing reCAPTCHA: ", error); // Log errors during reCAPTCHA initialization
+            alert("There was an error initializing reCAPTCHA. Please try again.");
+        });
+    });
+</script>
+
+@if (ViewData.ModelState?.IsValid == false)
+{
+    <div class="error">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+<style>
+    .login-form {
+        max-width: 400px; /* Set a max width for the form */
+        margin: auto; /* Center the form */
+        padding: 20px; /* Add some padding */
+        border: 1px solid #ccc; /* Add a border */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #f9f9f9; /* Light background color */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* Space between form groups */
+    }
+
+    .form-control {
+        width: 100%; /* Full width for inputs */
+        padding: 10px; /* Padding inside inputs */
+        border: 1px solid #ccc; /* Border for inputs */
+        border-radius: 4px; /* Rounded corners for inputs */
+    }
+
+    .btn {
+        width: 100%; /* Full width for the button */
+        padding: 10px; /* Padding inside the button */
+    }
+
+    .link-container {
+        display: flex; /* Use flexbox for layout */
+        justify-content: center; /* Center the links */
+        margin-top: 15px; /* Space above the links */
+    }
+
+    .link-container p {
+        margin: 0 10px; /* Space between the links */
+    }
+
+    .text-center {
+        text-align: center; /* Center the text */
+    }
+</style>

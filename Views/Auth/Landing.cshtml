@@ -1,22 +1,29 @@
-﻿@{
-    ViewData["Title"] = "Home";
+﻿@model AceAgencyMembership.Models.RegisterViewModel // Ensure this matches the model type
+@{
+    ViewData["Title"] = "Landing";
 }
 
 <!-- Main Content -->
 <div class="content-container">
-    <h1>Welcome to Ace Job Agency</h1>
+    <h2>Welcome, @Model.FirstName @Model.LastName!</h2> <!-- Display the user's name -->
 
-    @if (ViewBag.IsGuest == true)
-    {
-        <p>You are not logged in. <a asp-controller="Auth" asp-action="Login" class="btn btn-link">Login here</a></p>
-    }
-    else
-    {
-        <p>You are logged in as <strong>@ViewBag.UserEmail</strong></p>
-        <form method="post" asp-controller="Auth" asp-action="Logout">
-            <button type="submit" class="btn btn-primary">Logout</button>
-        </form>
-    }
+    <p>You have successfully logged into your account.</p>
+
+    <!-- Display the decrypted NRIC -->
+    <p>Your NRIC: <strong>@Model.EncryptedNRIC</strong></p>
+
+    <!--<p>Explore your dashboard and manage your settings.</p>-->
+    <!--<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Go to Dashboard</a>-->
+
+    <!-- Change Password Button -->
+    <div>
+        <p><a asp-controller="Auth" asp-action="ChangePassword" class="btn btn-secondary">Change Password</a></p>
+    </div>
+
+    <form asp-controller="Auth" asp-action="Logout" method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Logout</button> <!-- Logout button -->
+    </form>
 </div>
 
 <style>
@@ -32,8 +39,9 @@
     .app-bar {
         background-color: #007bff; /* App bar background color */
         color: white; /* Text color for app bar */
-        padding: 10px 20px; /* Padding for app bar */
+        padding: 15px 20px; /* Padding for app bar */
         text-align: center; /* Center text in app bar */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     }
 
     .content-container {
@@ -46,12 +54,14 @@
         padding: 20px; /* Add padding */
     }
 
-    h1 {
+    h2 {
         margin-bottom: 20px; /* Space below the heading */
+        color: #333; /* Darker color for better contrast */
     }
 
     p {
         margin: 10px 0; /* Space above and below paragraphs */
+        color: #555; /* Slightly lighter color for paragraphs */
     }
 
     .btn {
@@ -62,16 +72,8 @@
         transition: background-color 0.3s; /* Smooth transition for hover effect */
         text-decoration: none; /* Remove underline */
         color: white; /* Text color for buttons */
+        font-size: 1em; /* Font size for buttons */
     }
-
-    .btn-link {
-        color: #007bff; /* Link color */
-        text-decoration: none; /* Remove underline */
-    }
-
-        .btn-link:hover {
-            text-decoration: underline; /* Underline on hover */
-        }
 
     .btn-primary {
         background-color: #007bff; /* Primary button color */
@@ -81,10 +83,28 @@
             background-color: #0056b3; /* Darker shade on hover */
         }
 
+    .btn-secondary {
+        background-color: #6c757d; /* Secondary button color */
+        margin-top: 10px; /* Space above the secondary button */
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Darker shade on hover */
+        }
+
+    .btn-danger {
+        background-color: #dc3545; /* Danger button color */
+        margin-top: 10px; /* Space above the logout button */
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker shade on hover */
+        }
+
     .bottom-bar {
         background-color: #f1f1f1; /* Bottom bar background color */
         text-align: center; /* Center text in bottom bar */
         padding: 10px; /* Padding for bottom bar */
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     }
 </style>
-

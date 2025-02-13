@@ -1,0 +1,21 @@
+﻿@model AceAgencyMembership.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Email Verification Notice";
+}
+
+<h2>Email Verification Notice</h2>
+
+<p>A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.</p>
+
+<!-- Button to verify email using the token -->
+<form asp-controller="Auth" asp-action="VerifyEmail" method="get">
+    <input type="hidden" name="token" value="@ViewBag.Token" /> <!-- Assuming you pass the token to the view -->
+    <button type="submit">Verify Email</button>
+</form>
+
+<form asp-controller="Auth" asp-action="VerifyEmailNotice" method="post">
+    <input type="email" name="email" placeholder="Enter your email to resend verification" required />
+    <button type="submit">Resend Verification Email</button>
+</form>
+
+<a asp-controller="Auth" asp-action="Login">Return to Login</a>

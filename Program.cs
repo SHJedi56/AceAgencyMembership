@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging; // Add this using directive
 using AceAgencyMembership.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +46,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 // Add MVC controllers and views
 builder.Services.AddControllersWithViews();
 
+// Add logging services
+builder.Logging.ClearProviders(); // Optional: Clear default providers
+builder.Logging.AddConsole(); // Add console logging
+builder.Logging.AddDebug(); // Add debug logging
+
 var app = builder.Build();
 
 // Ensure the database is created and migrated
@@ -55,9 +61,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure middleware pipeline
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseDeveloperExceptionPage(); // Use Developer Exception Page in development
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error"); // Redirect to error page in production
     app.UseHsts();
 }
 

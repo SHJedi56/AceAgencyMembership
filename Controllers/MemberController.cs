@@ -33,7 +33,7 @@ namespace AceAgencyMembership.Controllers
                 return View();
             }
 
-            if (_context.Members.Any(m => m.Email == member.Email))
+            if (_context.Users.Any(m => m.Email == member.Email))
             {
                 ModelState.AddModelError("Email", "Email is already registered.");
                 return View();
@@ -44,6 +44,12 @@ namespace AceAgencyMembership.Controllers
 
             // Encrypt NRIC
             member.SetNRIC(member.EncryptedNRIC);
+
+            // Initialize other security properties
+            member.PasswordLastChanged = DateTime.UtcNow;
+            member.MustChangePassword = false;
+            member.IsEmailVerified = false;
+            member.EmailVerificationToken = GenerateEmailVerificationToken();
 
             // Save Member
             _context.Members.Add(member);
@@ -66,6 +72,16 @@ namespace AceAgencyMembership.Controllers
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 32));
+        }
+
+        private string GenerateEmailVerificationToken()
+        {
+            byte[] tokenBytes = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(tokenBytes);
+            }
+            return Convert.ToBase64String(tokenBytes);
         }
     }
 }
